@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <div id="app">
+        <h1>{{ vue_message }}</h1>
+        <ol>
+            <!-- html 상에서 사용할 수 있는 vue 전용 for문이다.
+                 list in lists === list : lists 와 같은 동의어 형식임
+                 결국 li를 lists의 개수만큼 만들게 된다. -->
+            <li v-for="list in lists">{{ list }}</li>
+        </ol>
+
+        <!-- vue 전용 클릭 핸들러로 클릭시 동작하는 매서드 등록 -->
+        <button v-on:click="handleClick">클릭</button>
+        <!-- vue와 html 상 양방향으로 데이터를 갱신할 수 있게 지원함 -->
+        <input v-model="initMsg">
+        <p>{{ initMsg }}</p>
+
+        <!-- 여기서 !는 not 연산자로 부정을 합니다 -->
+        <button v-on:click="show = !show">변경</button>
+        <!-- vue 상의 데이터를 가지고 조건문을 만드는 형식 -->
+        <p v-if="show">쇼타임! 예스!</p>
+        <p>{{ lists[2] }}</p>
+
+        <p>{{ button_count }} 번 클릭했습니다.</p>
+        <button v-on:click="button_click_increment">카운트 체크</button><br>
+
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <!-- v-bind는 vue 데이터를 html에 단방향 맵핑하는 것으로 v-model과는 차이가 있다.
+                 또한 편리성을 위해 v-bind:r 전체를 적지 않고
+                 단순히 :r 형식으로 표현할 수도 있다.
+                 이뜻은 원의 반지름 r을 vue 객체에 있는 r_radius로 맵핑하겠다는 것을 의미한다. -->
+            <circle cx="100" cy="75" :r="r_radius" fill="lightblue"/>
+        </svg>
+        <input type="range" min="0" max="100" v-model="r_radius"><br><br>
+
+        캐릭터명: <input v-model="character_name"><br>
+        레벨: <input v-model="character_level"><br>
+        상태: <input v-model="character_status"><br>
+        HP: <input v-model="character_hp"><br>
+        MP: <input v-model="character_mp"><br>
+        ATK: <input v-model="character_atk"><br>
+        DEF: <input v-model="character_def"><br>
+        DEX: <input v-model="character_dex"><br>
+        INT: <input v-model="character_int"><br>
+
+        <p>캐릭터명: {{ character_name }}   경험치: {{ cur_exp }} / {{ need_exp }}</p>
+        <p>레벨: {{ character_level }}</p>
+        <p>상태: {{ character_status }}</p>
+        <p>HP: {{ character_hp }}</p>
+        <p>MP: {{ character_mp }}</p>
+        <p>ATK: {{ character_atk }}</p>
+        <p>DEF: {{ character_def }}</p>
+        <p>DEX: {{ character_dex }}</p>
+        <p>INT: {{ character_int }}</p>
+        <p>소지금: {{ character_money }}</p>
+
+        <button v-on:click="add_many_monster">몬스터 대량 소환</button><br>
+
+        <button v-on:click="black_flame_dragon_in_me">내안에흑염룡!!!! 이야아아압!</button><br>
+        <!--
+        <button v-on:click="heavenAndEarthSlash">천지파열무!</button><br>
+        <button v-on:click="goBomb">가랏! 구슬폭탄!</button><br> -->
+
+        <!-- 상점 기능을 구현해주세요 -->
+        <h3>상점</h3>
+        <label>
+            <input type="checkbox" v-model="inventory_view" v-on:click="">내 인벤토리
+        </label>
+        <br>
+        <!-- 장비 보유시 효과 적용으로 만듭시다 -->
+        <table border="1" v-if="inventory_view">
+            <tr>
+                <th align="center" width="40">번호</th>
+                <th align="center" width="120">이름</th>
+                <th align="center" width="80">가격</th>
+                <th align="center" width="320">효과</th>
+                <th align="center" width="40">개수</th>
+            </tr>
+            <tr v-for="(list, idx) in my_inventory" :key="idx">
+                <th align="center" width="40">{{ idx + 1 }}</th>
+                <th align="center" width="120">{{ list.item_name }}</th>
+                <th align="center" width="80">{{ list.price }}</th>
+                <th align="center" width="320">{{ list.effect.desc }}</th>
+                <th align="center" width="40">1</th>
+            </tr>
+        </table>
+
+        <label>
+            <input type="checkbox" v-model="shop_view" v-on:click="shuffle_shop_list()">상점 목록
+        </label>
+        <button v-on:click="buy_process()">구매</button><br>
+        <table border="1" v-if="shop_view">
+            <tr>
+                <th align="center" width="20">번호</th>
+                <th align="center" width="120">이름</th>
+                <th align="center" width="80">가격</th>
+                <th align="center" width="320">효과</th>
+                <th align="center" width="40">구매</th>
+            </tr>
+            <tr v-for="(list, idx) in shop_list" :key="idx">
+                <th align="center" width="20">{{ idx + 1 }}</th>
+                <th align="center" width="120">{{ list.item_name }}</th>
+                <th align="center" width="80">{{ list.price }}</th>
+                <th align="center" width="320">{{ list.effect.desc }}</th>
+                <th align="center" width="40">
+                    <label>
+                        <input type="checkbox" v-model="shop_list_value" v-bind:value="idx">
+                    </label>
+                </th>
+            </tr>
+        </table>
+
+        이름: <input v-model="monster_name">
+        <button v-on:click="add_monster">몬스터 추가하기</button>
+
+        <ul>
+            <li v-for="(monster, index) in monsters"
+                v-bind:key="monster.id"
+                v-bind:class="{ strong: monster.hp > 300 }">
+                ID.{{ monster.id }} {{ monster.name }} HP.{{ monster.hp }}
+                <span v-if="monster.hp > 300">강적</span>
+
+                <!-- 광역기 보다는 단일기 위주로 배치함 -->
+                <button v-on:click="do_attack(index)">
+                    공격
+                </button>
+                <button v-on:click="omnislash(index)">
+                    초구무신패참!
+                </button>
+                <!--
+                <button v-on:click="do_attack(index)">
+                    열파참!
+                </button>
+                <button v-on:click="do_attack(index)">
+                    가랏! 피카츄!
+                </button>
+                <button v-on:click="do_attack(index)">
+                    반반무마니 ~
+                </button>
+                -->
+            </li>
+        </ul>
+
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                character_money: 1000,
+                character_name: '',
+                character_level: 1,
+                character_status: '',
+                character_hp: 100,
+                character_mp: 100,
+                character_atk: 12,
+                character_def: 3,
+                only_calc_def: 3,
+                character_dex: 10,
+                only_calc_dex: 10,
+                character_int: 10,
+                cur_exp: 0,
+                need_exp: 10,
+                monster_name: '키메라',
+                monsters: [
+                    { id: 1, name: '슬라임', hp: 50 },
+                    { id: 2, name: '고블린', hp: 60 },
+                    { id: 3, name: '야생 토끼', hp: 50 },
+                    { id: 4, name: '흑염룡', hp: 10000000 }
+                ],
+                monster_book: [
+                    { monster_name: '슬라임', exp: 5, hp: 50, spr_money: 10 },
+                    { monster_name: '고블린', exp: 6, hp: 60, spr_money: 15 },
+                    { monster_name: '야생 토끼', exp: 6, hp: 50, spr_money: 3 },
+                    { monster_name: '빨간 슬라임', exp: 25, hp: 200, spr_money: 40 },
+                    { monster_name: '파랑 슬라임', exp: 30, hp: 225, spr_money: 40 },
+                    { monster_name: '노랑 슬라임', exp: 33, hp: 230, spr_money: 40 },
+                    { monster_name: '늑대', exp: 50, hp: 300, spr_money: 50 },
+                    { monster_name: '거대쥐', exp: 60, hp: 400, spr_money: 55 },
+                    { monster_name: '키메라', exp: 80, hp: 500, spr_money: 60 },
+                    { monster_name: '슬라임 킹', exp: 200, hp: 1500, spr_money: 1000 },
+                    { monster_name: '유령', exp: 500, hp: 7000, spr_money: 1500 },
+                    { monster_name: '리치', exp: 1000, hp: 10000, spr_money: 2000 },
+                    { monster_name: '베히모스', exp: 2000, hp: 20000, spr_money: 3000 },
+                    { monster_name: '드래곤', exp: 100000, hp: 1000000, spr_money: 300000 },
+                    { monster_name: '흑염룡', exp: 1000000, hp: 10000000, spr_money: 3000000 }
+                ],
+                item_book: [
+                    {
+                        item_name: 'HP 포션 I', price: 50,
+                        effect: {
+                            desc: 'HP 20 회복'
+                        }
+                    },
+                    {
+                        item_name: 'HP 포션 II', price: 150,
+                        effect: {
+                            desc: 'HP 40 회복'
+                        }
+                    },
+                    {
+                        item_name: 'HP 포션 III', price: 500,
+                        effect: {
+                            desc: 'HP 100 회복'
+                        }
+                    },
+                    {
+                        item_name: 'HP 포션 IV', price: 2500,
+                        effect: {
+                            desc: 'HP 200 회복'
+                        }
+                    },
+                    {
+                        item_name: 'HP 포션 V', price: 10000,
+                        effect: {
+                            desc: 'HP 400 회복'
+                        }
+                    },
+                    {
+                        item_name: '엘릭서', price: 3000000,
+                        effect: {
+                            desc: 'HP 완전 회복, 모든 능력치 + 10',
+                            atk: 10,
+                            def: 10,
+                            dex: 10,
+                            int: 10
+                        }
+                    },
+                    {
+                        item_name: '녹슨검', price: 1000000,
+                        effect: {
+                            desc: '공격력 100 증가',
+                            atk: 100
+                        }
+                    },
+                    {
+                        item_name: '검', price: 2000000,
+                        effect: {
+                            desc: '공격력 150 증가',
+                            atk: 150
+                        }
+                    },
+                    {
+                        item_name: '강철검', price: 5000000,
+                        effect: {
+                            desc: '공격력 200, 민첩 50 증가',
+                            atk: 200,
+                            dex: 50
+                        }
+                    },
+                    {
+                        item_name: '롱소드', price: 10000000,
+                        effect: {
+                            desc: '공격력 250, 민첩 100, 방어력 100 증가',
+                            atk: 250,
+                            dex: 100,
+                            def: 100
+                        }
+                    }
+                ],
+                shop_list_value: [],
+                my_inventory: [],
+                inventory_view: false,
+                shop_view: false,
+                shop_list: [],
+                vue_message: 'Hello Vue.js in Web Programming Course',
+                lists: ['apple', 'banana', 'orange', 'watermelon'],
+                initMsg: '초기메시지',
+                button_count: 0,
+                r_radius: 25,
+                show: true
+            },
+            methods: {
+                handleClick: function () {
+                    alert('안녕')
+                },
+                button_click_increment: function () {
+                    this.button_count += 1;
+                },
+                add_monster: function () {
+                    // 존재하는 id 중 제일 높은값을 찾음
+                    var max = this.monsters.reduce(function(a, b) {
+                        return a > b.id ? a : b.id
+                    }, 0)
+                    this.monsters.push({
+                        id: max + 1,
+                        name: this.monster_name,
+                        hp: 500
+                    })
+                },
+                add_many_monster: function () {
+                    for (var i = 0; i < 100; i++) {
+                        var max = this.monsters.reduce(function(a, b) {
+                            return a > b.id ? a : b.id
+                        }, 0)
+
+                        var max_len = this.monster_book.length
+                        var idx = Math.floor(Math.random() * max_len)
+
+                        this.monsters.push({
+                            id: max + 1,
+                            name: this.monster_book[idx].monster_name,
+                            hp: this.monster_book[idx].hp,
+                            status: 'Default'
+                        })
+                    }
+                },
+                do_attack: function (index) {
+                    this.monsters[index].hp -= this.character_atk;
+                },
+                omnislash: function (index) {
+                    this.monsters[index].hp -= (this.character_atk * 200 + this.character_dex * 50)
+                },
+                black_flame_dragon_in_me: function () {
+                    for (var i = 0; i < this.monsters.length; i++) {
+                        this.monsters[i].hp = parseInt(this.monsters[i].hp - this.character_atk * 2.5)
+
+                        if (this.monsters[i].hp > 0) {
+                            this.monsters[i].status = '스턴'
+                        }
+                    }
+                },
+                shuffle_shop_list: function () {
+                    if (!this.shop_view) {
+                        this.shop_list_value = []
+                    }
+
+                    for (var i = 0; i < 10; i++) {
+                        var rand_idx = Math.floor(Math.random() * this.item_book.length)
+                        this.shop_list[i] = this.item_book[rand_idx]
+                    }
+                },
+                buy_process: function () {
+                    var tmp_sum = 0
+
+                    // 구매를 원하여 체크한 리스트
+                    for (var i = 0; i < this.shop_list_value.length; i++) {
+                        // 현재 랜덤으로 뽑아온 상점 리스트
+                        for (var j = 0; j < this.shop_list.length; j++) {
+                            if (this.shop_list_value[i] == j) {
+                               tmp_sum += this.shop_list[j].price
+                               break
+                            }
+                        }
+                    }
+
+                    // 돈 계산(내가 소지한 돈 - 구매하려는 물품의 가격 >= 0)
+                    if (this.character_money - tmp_sum >= 0) {
+                        this.character_money -= tmp_sum
+
+                        // 구매한 물건을 내 아이템 창에 등록한다.
+                        for (var i = 0; i < this.shop_list_value.length; i++) {
+                            this.my_inventory.push({
+                                item_name: this.shop_list[this.shop_list_value[i]].item_name,
+                                effect: this.shop_list[this.shop_list_value[i]].effect
+                            })
+                        }
+                    } else {
+                        alert('돈 가져와! 어디서 외상을 하려고 ?!')
+                    }
+                }
+            },
+            beforeCreate () {
+                console.log('beforeCreate()')
+            },
+            created () {
+                console.log('created()')
+            },
+            beforeMount () {
+                console.log('beforeMount()')
+            },
+            mounted () {
+                console.log('mounted()')
+            },
+            beforeUpdate () {
+                console.log('my_inventory: ' + this.my_inventory)
+                // console.log('shop_list_value: ' + this.shop_list_value)
+                // console.log('cur_exp: ' + this.cur_exp)
+
+                // 몬스터 잡았는지 판정하는 부분
+                for(var i = 0; i < this.monsters.length; i++) {
+                    if(this.monsters[i].hp <= 0) {
+                        for(var j = 0; j < this.monster_book.length; j++) {
+                            if (this.monsters[i].name == this.monster_book[j].monster_name) {
+                                // console.log('경험치 환산중')
+                                this.cur_exp += this.monster_book[j].exp
+                                var tmp = this.monster_book[j].spr_money
+                                this.character_money += parseInt(tmp + Math.random() * (tmp / 2))
+                            }
+                        }
+                        this.monsters.splice(i, 1);
+                    }
+                }
+
+                // 경험치 계산
+                var criteria = this.cur_exp
+
+                for(; this.cur_exp >= this.need_exp; ) {
+                    this.cur_exp = parseInt(this.cur_exp - this.need_exp)
+
+                    this.character_level += 1
+                    this.character_hp += 10
+                    this.character_atk += 3
+                    this.only_calc_def += 0.4
+                    this.character_def = Math.floor(this.only_calc_def)
+                    this.only_calc_dex += 0.6
+                    this.character_dex = Math.floor(this.only_calc_dex)
+
+                    if (this.character_level < 10) {
+                        this.need_exp = parseInt(this.need_exp * 1.1)
+                    } else if (this.character_level < 20) {
+                        this.need_exp = parseInt(this.need_exp * 1.2)
+                    } else if (this.character_level < 30) {
+                        this.need_exp = parseInt(this.need_exp * 1.3)
+                    } else if (this.character_level < 40) {
+                        this.need_exp = parseInt(this.need_exp * 1.4)
+                    } else if (this.character_level < 50) {
+                        this.need_exp = parseInt(this.need_exp * 1.5)
+                    } else if (this.character_level < 90) {
+                        this.need_exp = parseInt(this.need_exp * 1.7)
+                    } else if (this.character_level < 100) {
+                        this.need_exp = parseInt(this.need_exp * 2)
+                    }
+                }
+            },
+            updated () {
+                console.log('updated()')
+            },
+            beforeDestroy () {
+                console.log('beforeDestroy()')
+            },
+            destroyed () {
+                console.log('destroyed()')
+            }
+        })
+    </script>
+</body>
+</html>
